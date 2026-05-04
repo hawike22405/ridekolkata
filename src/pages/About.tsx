@@ -121,7 +121,10 @@ export function About() {
             {[
               { name: "Sayan Pal", role: "Founder & CEO", img: "sayan.png" },
               { name: "Sanju Ghorai", role: "Head of Operations", img: "/Sanju.jpeg" },
-              { name: "Rahul Bose", role: "Tech Lead", img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=1974&auto=format&fit=crop" },
+              { name: "Sarthak Mandal", role: "Tech Lead", img: "sarthak.jpeg" },
+              { name: "Nimai Das", role: "Tech Lead", img: "Nimai.jpeg" },
+              { name: "Debajit Bera", role: "Tech Lead", img: "Debajit.jpeg" },
+              { name: "Suvam Das", role: "Tech Lead", img: "Suvam.jpeg" },
             ].map((member, i) => (
               <motion.div
                 key={i}
