@@ -89,9 +89,9 @@ async function startServer() {
   // ── Cycle rental endpoints ───────────────────────────────────────────────
 
   const cycles = [
-    { id: 1, name: "City Cruiser", type: "Standard", price: 15, available: true, location: [22.5726, 88.3639], description: "Perfect for city streets." },
+    { id: 1, name: "City Hero", type: "Standard", price: 15, available: true, location: [22.5726, 88.3639], description: "Perfect for city streets." },
     { id: 2, name: "Mountain Pro", type: "MTB", price: 25, available: true, location: [22.5851, 88.3468], description: "Tackle any terrain." },
-    { id: 3, name: "Electric Glide", type: "Electric", price: 40, available: true, location: [22.5675, 88.3474], description: "Effortless riding." },
+    { id: 3, name: "New Glide", type: "Electric", price: 40, available: true, location: [22.5675, 88.3474], description: "Effortless riding." },
     { id: 4, name: "Vintage Kolkata", type: "Classic", price: 20, available: true, location: [22.5958, 88.3433], description: "Classic look, modern feel." },
     { id: 5,  name: "Park Street Rider", type: "Standard", price: 15, available: true,  location: [22.5530, 88.3530], description: "Start from the heart of Kolkata." },
     { id: 6,  name: "Salt Lake Speeder", type: "Electric", price: 40, available: true,  location: [22.5744, 88.4337], description: "Zoom around Salt Lake City." },
