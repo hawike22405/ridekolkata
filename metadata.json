@@ -1,0 +1,7 @@
+{
+  "name": "Remix: RideKolkata",
+  "description": "A modern, vibrant cycle rental service in Kolkata with real-time booking, AI-based route recommendations, and a unique urban design inspired by the streets of Kolkata.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}

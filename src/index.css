@@ -1,0 +1,41 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Space Grotesk", sans-serif;
+  
+  --color-kolkata-yellow: #FFD700;
+  --color-kolkata-black: #1A1A1A;
+  --color-kolkata-white: #F5F5F5;
+  --color-kolkata-accent: #FF4500;
+}
+
+@layer base {
+  body {
+    @apply bg-kolkata-white text-kolkata-black font-sans;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display font-bold;
+  }
+}
+
+.kolkata-grid {
+  background-image: radial-gradient(var(--color-kolkata-black) 0.5px, transparent 0.5px);
+  background-size: 20px 20px;
+  opacity: 0.05;
+}
+
+.glass-card {
+  @apply bg-white/80 backdrop-blur-md border border-white/20 shadow-xl;
+}
+
+.btn-primary {
+  @apply bg-kolkata-yellow text-kolkata-black px-6 py-3 rounded-full font-bold transition-all hover:scale-105 active:scale-95 shadow-lg hover:shadow-kolkata-yellow/20;
+}
+
+.btn-secondary {
+  @apply bg-kolkata-black text-kolkata-yellow px-6 py-3 rounded-full font-bold transition-all hover:scale-105 active:scale-95 shadow-lg;
+}
+
