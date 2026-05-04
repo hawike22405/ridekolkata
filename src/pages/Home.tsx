@@ -109,7 +109,7 @@ export function Home() {
             {[
               { title: "Victoria Memorial", img: "https://images.unsplash.com/photo-1558431382-27e303142255?q=80&w=1974&auto=format&fit=crop" },
               { title: "Howrah Bridge", img: "Howarah bridge.jpg" },
-              { title: "Princep Ghat", img: "princep ghat.jpg" },
+              { title: "Princep Ghat", img: "https://www.google.com/imgres?q=princep%20ghat&imgurl=https%3A%2F%2Fhblimg.mmtcdn.com%2Fcontent%2Fhubble%2Fimg%2Fkolkata%2Fmmt%2Factivities%2Fm_Prinsep%2520Ghat-1_l_415_622.jpg&imgrefurl=https%3A%2F%2Fwww.makemytrip.com%2Ftripideas%2Fattractions%2Fprinsep-ghat&docid=BXHihzKRAlXWMM&tbnid=L_AJuE-O_QSVwM&vet=12ahUKEwimu67uxZ-UAxWGsFYBHYIxIDIQnPAOegQIERAB..i&w=622&h=415&hcb=2&ved=2ahUKEwimu67uxZ-UAxWGsFYBHYIxIDIQnPAOegQIERAB&auto=format&fit=crop" },
             ].map((item, i) => (
               <motion.div
                 key={i}
