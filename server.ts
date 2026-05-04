@@ -40,7 +40,7 @@ const users: User[] = [
 
 async function startServer() {
   const app = express();
-  const PORT = process.env.PORT || 3000; // ← Railway injects PORT automatically
+  const PORT = process.env.PORT ||3000;
 
   app.use(express.json());
 
