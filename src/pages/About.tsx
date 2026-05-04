@@ -119,8 +119,8 @@ export function About() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
             {[
-              { name: "Sayan Pal", role: "Founder & CEO", img: "https://photos.fife.usercontent.google.com/pw/AP1GczOW1NTv-6k_qWueZIOhbnjizYI0AaziO14SMYkPYP_BXcNiSo4w8Kc4lg=w165-h220-no?authuser=0&auto=format&fit=crop" },
-              { name: "Sanju Ghorai", role: "Head of Operations", img: ""D:\AU\Mini Project\Sanju.jpeg"&auto=format&fit=crop" },
+              { name: "Sayan Pal", role: "Founder & CEO", img: "/sayan.png&auto=format&fit=crop" },
+              { name: "Sanju Ghorai", role: "Head of Operations", img: "/Sanju.jpeg&auto=format&fit=crop" },
               { name: "Rahul Bose", role: "Tech Lead", img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=1974&auto=format&fit=crop" },
             ].map((member, i) => (
               <motion.div
