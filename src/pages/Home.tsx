@@ -108,8 +108,8 @@ export function Home() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
               { title: "Victoria Memorial", img: "https://images.unsplash.com/photo-1558431382-27e303142255?q=80&w=1974&auto=format&fit=crop" },
-              { title: "Howrah Bridge", img: "https://images.unsplash.com/photo-1590050752117-23a9d7fc2440?q=80&w=2070&auto=format&fit=crop" },
-              { title: "Princep Ghat", img: "https://images.unsplash.com/photo-1623150502742-6a849aa94be4?q=80&w=2070&auto=format&fit=crop" },
+              { title: "Howrah Bridge", img: "Howarah bridge.jpg" },
+              { title: "Princep Ghat", img: "princep ghat.jpg" },
             ].map((item, i) => (
               <motion.div
                 key={i}
