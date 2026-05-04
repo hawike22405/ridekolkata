@@ -93,6 +93,17 @@ async function startServer() {
     { id: 2, name: "Mountain Pro", type: "MTB", price: 25, available: true, location: [22.5851, 88.3468], description: "Tackle any terrain." },
     { id: 3, name: "Electric Glide", type: "Electric", price: 40, available: true, location: [22.5675, 88.3474], description: "Effortless riding." },
     { id: 4, name: "Vintage Kolkata", type: "Classic", price: 20, available: true, location: [22.5958, 88.3433], description: "Classic look, modern feel." },
+    { id: 5,  name: "Park Street Rider", type: "Standard", price: 15, available: true,  location: [22.5530, 88.3530], description: "Start from the heart of Kolkata." },
+    { id: 6,  name: "Salt Lake Speeder", type: "Electric", price: 40, available: true,  location: [22.5744, 88.4337], description: "Zoom around Salt Lake City." },
+    { id: 7,  name: "Eco Park Explorer", type: "MTB",      price: 25, available: false, location: [22.5892, 88.4595], description: "Explore Eco Park trails." },
+    { id: 8,  name: "Tollygunge Trek",   type: "MTB",      price: 25, available: true,  location: [22.4997, 88.3430], description: "South Kolkata adventure." },
+    { id: 9,  name: "Behala Breeze",     type: "Classic",  price: 20, available: true,  location: [22.4890, 88.3180], description: "Cruise through Behala." },
+    { id: 10, name: "Garia Glider",      type: "Standard", price: 15, available: true,  location: [22.4697, 88.3888], description: "South Kolkata favourite." },
+    { id: 11, name: "Shyambazar Sprint", type: "Standard", price: 15, available: true,  location: [22.6049, 88.3727], description: "North Kolkata classic ride." },
+    { id: 12, name: "Princep Pacer",     type: "Classic",  price: 20, available: true,  location: [22.5600, 88.3320], description: "Ride by the Ghats." },
+    { id: 13, name: "Kalighat Cruiser",  type: "Standard", price: 15, available: false, location: [22.5204, 88.3453], description: "Historic neighbourhood ride." },
+    { id: 14, name: "New Town Nimbus",   type: "Electric", price: 40, available: true,  location: [22.6118, 88.4653], description: "Future city, future ride." },
+    { id: 15, name: "Howrah Hero",       type: "MTB",      price: 25, available: true,  location: [22.5958, 88.2636], description: "Cross the bridge, own the road." },
   ];
 
   app.get("/api/cycles", (req, res) => {
