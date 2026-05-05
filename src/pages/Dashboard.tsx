@@ -209,8 +209,8 @@ export function Dashboard() {
                         <p className="text-gray-500 text-sm font-bold uppercase tracking-widest">Generating Route...</p>
                       </div>
                     ) : (
-                      <div className="flex flex-col h-full justify-between">
-                        <div className="text-gray-400 leading-relaxed mb-8 italic">
+                      <div className="flex flex-col gap-6">
+                        <div className="text-gray-400 leading-relaxed mb-8 italic max-h-40 overflow-y-auto pr-1">
                           "{aiRecommendation}"
                         </div>
                         <button 
