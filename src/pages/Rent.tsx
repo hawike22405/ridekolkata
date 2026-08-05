@@ -1,22 +1,10 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Search, Filter, MapPin, Bike, Zap, Star, Shield, ArrowRight, X } from "lucide-react";
-import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
-import "leaflet/dist/leaflet.css";
-import L from "leaflet";
 import { toast } from "sonner";
 import { cn } from "../lib/utils";
 import { useAuth } from "../context/AuthContext";
-
-// Fix for default marker icon in Leaflet
-const DefaultIcon = L.divIcon({
-  html: `<div class="bg-kolkata-yellow p-2 rounded-full border-2 border-kolkata-black shadow-lg"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="18.5" cy="17.5" r="3.5"/><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="15" cy="5" r="1"/><path d="M12 17.5V14l-3-3 4-3 2 3h2"/></svg></div>`,
-  className: "",
-  iconSize: [32, 32],
-  iconAnchor: [16, 32],
-});
-
-L.Marker.prototype.options.icon = DefaultIcon;
+import { BikeViewer, Globe3D } from "../components/3d";
 
 interface Cycle {
   id: number;
@@ -148,32 +136,14 @@ export function Rent() {
           </div>
         </div>
 
-        {/* Right: Map and Details */}
+        {/* Right: 3D Globe and Details */}
         <div className="w-full lg:w-2/3 flex flex-col gap-8">
-          <div className="h-[500px] rounded-[3rem] overflow-hidden border-4 border-white shadow-2xl relative z-0">
-            <MapContainer center={[22.5726, 88.3639]} zoom={13} style={{ height: "100%", width: "100%" }}>
-              <TileLayer
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-              />
-              {filteredCycles.map((cycle) => (
-                <Marker 
-                  key={cycle.id} 
-                  position={cycle.location}
-                  eventHandlers={{
-                    click: () => setSelectedCycle(cycle),
-                  }}
-                >
-                  <Popup>
-                    <div className="p-2">
-                      <h4 className="font-bold">{cycle.name}</h4>
-                      <p className="text-sm">₹{cycle.price}/hr</p>
-                    </div>
-                  </Popup>
-                </Marker>
-              ))}
-              <MapUpdater center={selectedCycle?.location || [22.5726, 88.3639]} />
-            </MapContainer>
+          <div className="h-[500px] rounded-[3rem] overflow-hidden border-4 border-white shadow-2xl relative z-0 bg-kolkata-white">
+            <Globe3D
+              cycles={filteredCycles}
+              selectedCycle={selectedCycle}
+              onSelectCycle={setSelectedCycle}
+            />
           </div>
 
           <AnimatePresence mode="wait">
@@ -186,21 +156,21 @@ export function Rent() {
                 className="glass-card p-10 rounded-[3rem] relative overflow-hidden"
               >
                 <div className="absolute top-0 right-0 w-64 h-64 bg-kolkata-yellow/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl" />
-                <button 
+                <button
                   onClick={() => setSelectedCycle(null)}
                   className="absolute top-6 right-6 p-2 hover:bg-gray-100 rounded-full transition-colors"
                 >
                   <X className="w-6 h-6" />
                 </button>
 
-                <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-12">
+                <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12">
                   <div>
                     <span className="bg-kolkata-black text-kolkata-yellow px-4 py-1 rounded-full text-xs font-bold uppercase tracking-widest mb-4 inline-block">
                       {selectedCycle.type}
                     </span>
                     <h2 className="text-4xl font-display font-black mb-4">{selectedCycle.name}</h2>
                     <p className="text-gray-500 mb-8 leading-relaxed">{selectedCycle.description}</p>
-                    
+
                     <div className="grid grid-cols-2 gap-4 mb-8">
                       <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100">
                         <Zap className="w-5 h-5 text-kolkata-yellow mb-2" />
@@ -218,13 +188,24 @@ export function Rent() {
                   <div className="flex flex-col justify-center items-center bg-kolkata-black text-white p-10 rounded-[2.5rem] text-center">
                     <p className="text-gray-400 mb-2 uppercase tracking-widest text-sm font-bold">Total Price</p>
                     <p className="text-6xl font-black mb-8">₹{selectedCycle.price}<span className="text-xl text-gray-500 font-normal">/hr</span></p>
-                    <button 
+                    <button
                       onClick={() => handleBook(selectedCycle)}
                       className="btn-primary w-full py-5 text-xl flex items-center justify-center gap-3"
                     >
                       Book Now <ArrowRight className="w-6 h-6" />
                     </button>
                     <p className="mt-6 text-sm text-gray-500">No hidden charges. Pay via UPI or Cards.</p>
+                  </div>
+                </div>
+
+                {/* 3D Bike Viewer */}
+                <div className="relative z-10 mt-10">
+                  <h3 className="text-2xl font-bold mb-6 flex items-center gap-2">
+                    <Bike className="w-6 h-6 text-kolkata-yellow" />
+                    3D Preview
+                  </h3>
+                  <div className="h-[350px] rounded-2xl overflow-hidden bg-kolkata-white">
+                    <BikeViewer type={selectedCycle.type} interactive={true} />
                   </div>
                 </div>
               </motion.div>

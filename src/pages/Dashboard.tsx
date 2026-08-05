@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { cn } from "../lib/utils";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from "recharts";
+import { Chart3D, ParticleBackground } from "../components/3d";
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "" });
 
@@ -163,30 +163,21 @@ export function Dashboard() {
 
                 {/* Chart and AI Recommendation */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                  <div className="glass-card p-8 rounded-[2.5rem]">
-                    <h3 className="text-xl font-bold mb-8 flex items-center gap-2">
+                  <div className="glass-card p-8 rounded-[2.5rem] relative overflow-hidden">
+                    <div className="absolute inset-0 -z-10">
+                      <ParticleBackground numParticles={800} color="#FFD700" size={0.01} />
+                    </div>
+                    <h3 className="text-xl font-bold mb-8 flex items-center gap-2 relative z-10">
                       <TrendingUp className="w-5 h-5 text-kolkata-yellow" />
                       Weekly Activity
                     </h3>
-                    <div className="h-64 w-full">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <AreaChart data={chartData}>
-                          <defs>
-                            <linearGradient id="colorRides" x1="0" y1="0" x2="0" y2="1">
-                              <stop offset="5%" stopColor="#FFD700" stopOpacity={0.3}/>
-                              <stop offset="95%" stopColor="#FFD700" stopOpacity={0}/>
-                            </linearGradient>
-                          </defs>
-                          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#eee" />
-                          <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fontWeight: "bold" }} />
-                          <YAxis hide />
-                          <Tooltip 
-                            contentStyle={{ borderRadius: "16px", border: "none", boxShadow: "0 10px 25px rgba(0,0,0,0.1)" }}
-                            itemStyle={{ fontWeight: "bold", color: "#1A1A1A" }}
-                          />
-                          <Area type="monotone" dataKey="rides" stroke="#FFD700" strokeWidth={4} fillOpacity={1} fill="url(#colorRides)" />
-                        </AreaChart>
-                      </ResponsiveContainer>
+                    <div className="h-64 w-full relative z-10">
+                      <Chart3D
+                        data={chartData.map(d => ({ name: d.name, value: d.rides }))}
+                        type="bar"
+                        color="#FFD700"
+                        height={256}
+                      />
                     </div>
                   </div>
 

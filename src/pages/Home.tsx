@@ -1,6 +1,7 @@
 import { motion } from "motion/react";
 import { ArrowRight, Bike, MapPin, Shield, Zap, Star, TrendingUp, Users } from "lucide-react";
 import { Link } from "react-router-dom";
+import { Hero3D } from "../components/3d";
 
 export function Home() {
   const features = [
@@ -49,14 +50,10 @@ export function Home() {
             transition={{ duration: 1, delay: 0.2 }}
             className="relative"
           >
-            <div className="absolute -inset-4 bg-kolkata-yellow/20 rounded-full blur-3xl animate-pulse" />
-            <img
-              src="https://images.unsplash.com/photo-1485965120184-e220f721d03e?q=80&w=2070&auto=format&fit=crop"
-              alt="Cycle in Kolkata"
-              className="relative rounded-3xl shadow-2xl border-4 border-white transform rotate-2 hover:rotate-0 transition-transform duration-500"
-              referrerPolicy="no-referrer"
-            />
-            <div className="absolute -bottom-8 -left-8 glass-card p-6 rounded-2xl flex items-center gap-4 animate-bounce">
+            <div className="absolute inset-0 z-0">
+              <Hero3D />
+            </div>
+            <div className="absolute -bottom-8 -left-8 glass-card p-6 rounded-2xl flex items-center gap-4 animate-bounce z-10">
               <div className="bg-kolkata-yellow p-3 rounded-xl">
                 <Users className="w-6 h-6 text-kolkata-black" />
               </div>

@@ -1,5 +1,6 @@
 import { motion } from "motion/react";
 import { Bike, Users, MapPin, Star, TrendingUp, Zap, Shield, Heart } from "lucide-react";
+import { BikeViewer } from "../components/3d";
 
 export function About() {
   const stats = [
@@ -99,13 +100,9 @@ export function About() {
           viewport={{ once: true }}
           className="relative"
         >
-          <div className="absolute -inset-4 bg-kolkata-yellow/20 rounded-full blur-3xl animate-pulse" />
-          <img
-            src="https://images.unsplash.com/photo-1517649763962-0c623066013b?q=80&w=2070&auto=format&fit=crop"
-            alt="Cycling Community"
-            className="relative rounded-[3rem] shadow-2xl border-4 border-white transform -rotate-2 hover:rotate-0 transition-transform duration-500"
-            referrerPolicy="no-referrer"
-          />
+          <div className="h-[500px] rounded-[3rem] overflow-hidden border-4 border-white shadow-2xl bg-kolkata-white">
+            <BikeViewer type="Classic" interactive={true} />
+          </div>
         </motion.div>
       </section>
 
