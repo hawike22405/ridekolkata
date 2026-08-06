@@ -45,7 +45,7 @@ export function Navbar() {
     : "U";
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-kolkata-black/5">
+    <nav className="fixed top-0 left-0 right-0 z-50 liquid-glass">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           <Link to="/" className="flex items-center gap-2 group">
@@ -138,7 +138,7 @@ export function Navbar() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="md:hidden bg-white border-b border-kolkata-black/5 px-4 py-6 flex flex-col gap-4"
+            className="md:hidden liquid-glass px-4 py-6 flex flex-col gap-4"
           >
             {isAuthenticated && user && (
               <div className="flex items-center gap-3 p-4 bg-kolkata-yellow/10 rounded-2xl border border-kolkata-yellow/20 mb-2">

@@ -1,5 +1,5 @@
 import { Canvas, useFrame } from "@react-three/fiber";
-import { useMemo } from "react";
+import { useMemo, useRef } from "react";
 import * as THREE from "three";
 
 interface ParticleBackgroundProps {
@@ -10,6 +10,8 @@ interface ParticleBackgroundProps {
 }
 
 function Particles({ numParticles = 2000, color = "#FFD700", size = 0.02 }) {
+  const pointsRef = useRef<THREE.Points>(null);
+
   const positions = useMemo(() => {
     const arr = new Float32Array(numParticles * 3);
     for (let i = 0; i < numParticles * 3; i += 3) {
@@ -52,8 +54,8 @@ function Particles({ numParticles = 2000, color = "#FFD700", size = 0.02 }) {
     [color, size]
   );
 
-  const pointsRef = useFrame((state, delta) => {
-    const pos = (state as any).context.pointsRef?.current?.geometry?.attributes?.position;
+  useFrame((_, delta) => {
+    const pos = pointsRef.current?.geometry?.attributes?.position;
     if (!pos) return;
     const array = pos.array as Float32Array;
     for (let i = 0; i < array.length; i += 3) {
@@ -72,7 +74,7 @@ function Particles({ numParticles = 2000, color = "#FFD700", size = 0.02 }) {
       }
     }
     pos.needsUpdate = true;
-  }, {});
+  });
 
   return (
     <points ref={pointsRef} geometry={geometry} material={material} />

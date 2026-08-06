@@ -4,9 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "tsx server.ts",
+    "dev": "C:\\PROGRA~1\\nodejs\\node.exe node_modules/tsx/dist/cli.mjs server.ts",
     "build": "vite build",
-    "start": "tsx server.ts",
+    "start": "C:\\PROGRA~1\\nodejs\\node.exe node_modules/tsx/dist/cli.mjs server.ts",
     "clean": "rm -rf dist",
     "lint": "tsc --noEmit"
   },

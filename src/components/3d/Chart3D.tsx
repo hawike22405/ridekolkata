@@ -1,6 +1,6 @@
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Html, Text } from "@react-three/drei";
-import { useMemo, useRef, useState } from "react";
+import { Suspense, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 
 interface Chart3DProps {
@@ -408,7 +408,7 @@ function LoadingState() {
             animation: "spin 1s linear infinite",
           }}
         />
-        <style jsx>{`
+        <style>{`
           @keyframes spin {
             to { transform: rotate(360deg); }
           }

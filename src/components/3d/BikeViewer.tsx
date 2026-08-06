@@ -1,5 +1,5 @@
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { useMemo, useRef, useState } from "react";
+import { Suspense, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import { OrbitControls, Html, PerspectiveCamera } from "@react-three/drei";
 
@@ -367,7 +367,7 @@ function LoadingState({ type = "Standard" }: { type?: string }) {
             animation: "spin 1s linear infinite",
           }}
         />
-        <style jsx>{`
+        <style>{`
           @keyframes spin {
             to { transform: rotate(360deg); }
           }

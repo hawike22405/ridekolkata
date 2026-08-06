@@ -1,6 +1,6 @@
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Html, Environment, PerspectiveCamera } from "@react-three/drei";
-import { useMemo, useRef, useState } from "react";
+import { Suspense, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import { Bike, MapPin, Zap, Star } from "lucide-react";
 
@@ -456,7 +456,7 @@ function LoadingOverlay() {
             animation: "spin 1s linear infinite",
           }}
         />
-        <style jsx>{`
+        <style>{`
           @keyframes spin {
             to { transform: rotate(360deg); }
           }
