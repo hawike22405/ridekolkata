@@ -191,7 +191,7 @@ Respond ONLY with valid JSON following this exact structure:
 }`;
 
     const response = await gemini.models.generateContent({
-      model: 'gemini-3.8-flash',
+      model: 'gemini-2.5-flash',
       contents: prompt,
       config: {
         responseMimeType: 'application/json',
