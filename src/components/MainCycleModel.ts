@@ -647,12 +647,12 @@ export function buildMainCycleModel(options: {
     },
     updateAccentColor: updateAccent,
     setWireframe: applyWireframe,
-    spinWheels: (deltaZ: number) => {
-      if (currentWheelF) currentWheelF.rotation.z -= deltaZ;
-      if (currentWheelR) currentWheelR.rotation.z -= deltaZ;
+    spinWheels: (delta: number) => {
+      if (currentWheelF) currentWheelF.rotation.x -= delta;
+      if (currentWheelR) currentWheelR.rotation.x -= delta;
     },
-    spinCranks: (deltaZ: number) => {
-      if (currentCranks) currentCranks.rotation.z -= deltaZ;
+    spinCranks: (delta: number) => {
+      if (currentCranks) currentCranks.rotation.x -= delta;
     },
     hotspots: MAIN_CYCLE_HOTSPOTS,
     loadGlbFromUrl,
