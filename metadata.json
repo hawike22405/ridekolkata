@@ -1,7 +1,6 @@
 {
-  "name": "Remix: RideKolkata",
-  "description": "A modern, vibrant cycle rental service in Kolkata with real-time booking, AI-based route recommendations, and a unique urban design inspired by the streets of Kolkata.",
-  "requestFramePermissions": [
-    "geolocation"
-  ]
+  "name": "Ride Kolkata - Street-Tech Micromobility",
+  "description": "High-octane urban micromobility designed for the streets of Joy with interactive 3D cyber-kinetic steeds, curated heritage circuits, nocturnal midnight sprints, and rider telemetry.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
