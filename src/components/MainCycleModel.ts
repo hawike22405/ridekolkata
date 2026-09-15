@@ -508,9 +508,33 @@ export function buildMainCycleModel(options: {
       }
     });
 
-    if (foundWheelF) currentWheelF = foundWheelF;
-    if (foundWheelR) currentWheelR = foundWheelR;
-    if (foundCranks) currentCranks = foundCranks;
+    const wrapWithCenterPivot = (obj: THREE.Object3D) => {
+      const box = new THREE.Box3().setFromObject(obj);
+      const center = new THREE.Vector3();
+      box.getCenter(center);
+      
+      if (obj.parent) {
+        obj.parent.worldToLocal(center);
+      }
+      
+      const wrapper = new THREE.Group();
+      wrapper.name = obj.name + '_PivotWrapper';
+      wrapper.position.copy(center);
+      
+      const oldPos = obj.position.clone();
+      
+      if (obj.parent) {
+        obj.parent.add(wrapper);
+      }
+      wrapper.add(obj);
+      obj.position.subVectors(oldPos, center);
+      
+      return wrapper;
+    };
+
+    if (foundWheelF) currentWheelF = wrapWithCenterPivot(foundWheelF);
+    if (foundWheelR) currentWheelR = wrapWithCenterPivot(foundWheelR);
+    if (foundCranks) currentCranks = wrapWithCenterPivot(foundCranks);
 
     currentNodes = glbNodes;
     isGlbActive = true;
