@@ -610,11 +610,7 @@ export default function ThreeCanvas({
             </button>
           </div>
 
-          {/* Top Right: 3D Inspection Guide Pill */}
-          <div className="hidden sm:flex absolute top-16 right-4 z-20 items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-surface-container-lowest/80 backdrop-blur-xl border border-surface-container-high/60 text-secondary font-label-caps text-xs pointer-events-none">
-            <Eye className="w-3.5 h-3.5 text-primary" />
-            <span>DRAG TO ROTATE • SCROLL TO ZOOM • DROP GLB FILE</span>
-          </div>
+
 
           {/* Active Hotspot Telemetry Popout Card */}
           {activeHotspot && (
