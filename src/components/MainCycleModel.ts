@@ -405,20 +405,12 @@ export function buildMainCycleModel(options: {
   const bikeGroup = new THREE.Group();
   const materials = createDefaultMaterials(accentColor);
 
-  let currentWheelF: THREE.Group;
-  let currentWheelR: THREE.Group;
-  let currentCranks: THREE.Group;
+  let currentWheelF: THREE.Group | undefined;
+  let currentWheelR: THREE.Group | undefined;
+  let currentCranks: THREE.Group | undefined;
   let currentNodes: Record<string, THREE.Object3D> = {};
   let isGlbActive = false;
   let currentStatus = 'Initializing Model...';
-
-  // Build the baseline procedural model matching the exact node names & structure
-  const procedural = buildProceduralGeometryTree(materials);
-  currentWheelF = procedural.wheelFGroup;
-  currentWheelR = procedural.wheelRGroup;
-  currentCranks = procedural.cranksGroup;
-  currentNodes = procedural.nodes;
-  bikeGroup.add(procedural.root);
 
   // Wireframe helper
   const applyWireframe = (wireframe: boolean) => {
@@ -508,18 +500,10 @@ export function buildMainCycleModel(options: {
       }
     });
 
-    const wrapWithCenterPivot = (obj: THREE.Object3D) => {
-      const box = new THREE.Box3().setFromObject(obj);
-      const center = new THREE.Vector3();
-      box.getCenter(center);
-      
-      if (obj.parent) {
-        obj.parent.worldToLocal(center);
-      }
-      
+    const wrapWithPivot = (obj: THREE.Object3D, manualCenter: THREE.Vector3) => {
       const wrapper = new THREE.Group();
       wrapper.name = obj.name + '_PivotWrapper';
-      wrapper.position.copy(center);
+      wrapper.position.copy(manualCenter);
       
       const oldPos = obj.position.clone();
       
@@ -527,14 +511,32 @@ export function buildMainCycleModel(options: {
         obj.parent.add(wrapper);
       }
       wrapper.add(obj);
-      obj.position.subVectors(oldPos, center);
+      obj.position.subVectors(oldPos, manualCenter);
       
       return wrapper;
     };
 
-    if (foundWheelF) currentWheelF = wrapWithCenterPivot(foundWheelF);
-    if (foundWheelR) currentWheelR = wrapWithCenterPivot(foundWheelR);
-    if (foundCranks) currentCranks = wrapWithCenterPivot(foundCranks);
+    if (foundWheelF) currentWheelF = wrapWithPivot(foundWheelF, new THREE.Vector3(0, 0.3277, -0.639));
+    if (foundWheelR) currentWheelR = wrapWithPivot(foundWheelR, new THREE.Vector3(0, 0.3277, 0.5546));
+    if (foundCranks) {
+      currentCranks = wrapWithPivot(foundCranks, new THREE.Vector3(0, 0.306, 0.1403));
+      
+      const wrapPedal = (pedal: THREE.Object3D) => {
+        const box = new THREE.Box3().setFromObject(pedal);
+        const center = new THREE.Vector3();
+        box.getCenter(center);
+        return wrapWithPivot(pedal, center);
+      };
+
+      if (glbNodes['PedalL']) {
+        currentNodes['PedalL_Wrapper'] = wrapPedal(glbNodes['PedalL']);
+        currentCranks.attach(currentNodes['PedalL_Wrapper']);
+      }
+      if (glbNodes['PedalR']) {
+        currentNodes['PedalR_Wrapper'] = wrapPedal(glbNodes['PedalR']);
+        currentCranks.attach(currentNodes['PedalR_Wrapper']);
+      }
+    }
 
     currentNodes = glbNodes;
     isGlbActive = true;
@@ -648,11 +650,15 @@ export function buildMainCycleModel(options: {
     updateAccentColor: updateAccent,
     setWireframe: applyWireframe,
     spinWheels: (delta: number) => {
-      if (currentWheelF) currentWheelF.rotation.x -= delta;
+      if (currentWheelF) currentWheelF.rotation.x += delta;
       if (currentWheelR) currentWheelR.rotation.x -= delta;
     },
     spinCranks: (delta: number) => {
-      if (currentCranks) currentCranks.rotation.x -= delta;
+      if (currentCranks) {
+        currentCranks.rotation.x -= delta;
+        if (currentNodes['PedalL_Wrapper']) currentNodes['PedalL_Wrapper'].rotation.x += delta;
+        if (currentNodes['PedalR_Wrapper']) currentNodes['PedalR_Wrapper'].rotation.x += delta;
+      }
     },
     hotspots: MAIN_CYCLE_HOTSPOTS,
     loadGlbFromUrl,
