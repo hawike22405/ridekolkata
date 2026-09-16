@@ -263,6 +263,9 @@ export default function ThreeCanvas({
 
     const onWheel = (e: WheelEvent) => {
       if (interactiveMode) {
+        // Only zoom if Ctrl or Meta is held (browser translates trackpad pinch to ctrlKey)
+        if (!e.ctrlKey && !e.metaKey) return;
+        
         e.preventDefault();
         const zoomDelta = e.deltaY * 0.005;
         const newDist = THREE.MathUtils.clamp(targetCameraPos.current.z + zoomDelta, 3.8, 9.8);
@@ -310,10 +313,10 @@ export default function ThreeCanvas({
     };
 
     window.addEventListener('mousemove', onPointerMove);
-    window.addEventListener('mousedown', onPointerDown);
+    container.addEventListener('mousedown', onPointerDown);
     window.addEventListener('mouseup', onPointerUp);
-    window.addEventListener('wheel', onWheel, { passive: false });
-    window.addEventListener('touchstart', onTouchStart, { passive: true });
+    container.addEventListener('wheel', onWheel, { passive: false });
+    container.addEventListener('touchstart', onTouchStart, { passive: true });
     window.addEventListener('touchmove', onTouchMove, { passive: true });
     window.addEventListener('touchend', onTouchEnd);
     window.addEventListener('scroll', onScroll, { passive: true });
@@ -388,10 +391,10 @@ export default function ThreeCanvas({
     return () => {
       cancelAnimationFrame(animationFrameId);
       window.removeEventListener('mousemove', onPointerMove);
-      window.removeEventListener('mousedown', onPointerDown);
+      container.removeEventListener('mousedown', onPointerDown);
       window.removeEventListener('mouseup', onPointerUp);
-      window.removeEventListener('wheel', onWheel);
-      window.removeEventListener('touchstart', onTouchStart);
+      container.removeEventListener('wheel', onWheel);
+      container.removeEventListener('touchstart', onTouchStart);
       window.removeEventListener('touchmove', onTouchMove);
       window.removeEventListener('touchend', onTouchEnd);
       window.removeEventListener('scroll', onScroll);
@@ -538,7 +541,7 @@ export default function ThreeCanvas({
       {interactiveMode && (
         <>
           {/* Top Left: Active Preset & Model Status Indicator */}
-          <div className="absolute top-4 left-4 z-20 flex flex-wrap items-center gap-2 pointer-events-auto max-w-[90vw]">
+          <div className="absolute top-16 left-4 z-20 flex flex-wrap items-center gap-2 pointer-events-auto max-w-[90vw]">
             <div className="flex items-center gap-1 bg-surface-container-lowest/90 backdrop-blur-xl p-1 rounded-full border border-surface-container-high/60 shadow-lg">
               <button
                 onClick={() => handleApplyPreset('hero')}
@@ -608,7 +611,7 @@ export default function ThreeCanvas({
           </div>
 
           {/* Top Right: 3D Inspection Guide Pill */}
-          <div className="hidden sm:flex absolute top-4 right-4 z-20 items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-surface-container-lowest/80 backdrop-blur-xl border border-surface-container-high/60 text-secondary font-label-caps text-xs pointer-events-none">
+          <div className="hidden sm:flex absolute top-16 right-4 z-20 items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-surface-container-lowest/80 backdrop-blur-xl border border-surface-container-high/60 text-secondary font-label-caps text-xs pointer-events-none">
             <Eye className="w-3.5 h-3.5 text-primary" />
             <span>DRAG TO ROTATE • SCROLL TO ZOOM • DROP GLB FILE</span>
           </div>

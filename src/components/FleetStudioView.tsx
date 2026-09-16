@@ -70,8 +70,8 @@ export default function FleetStudioView({ onReserveSteed }: FleetStudioViewProps
         {/* Left: 3D Interactive Viewport (8 Cols) */}
         <div className="lg:col-span-8 rounded-xl bg-surface-container-lowest/90 backdrop-blur-2xl shadow-xl border border-surface-container-high/60 overflow-hidden relative flex flex-col justify-between h-[520px]">
           {/* Top Viewport HUD Overlay */}
-          <div className="relative z-10 p-space-md flex items-center justify-between pointer-events-none">
-            <div className="flex items-center gap-2">
+          <div className="relative z-10 p-space-md flex flex-wrap items-start md:items-center justify-between pointer-events-none gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <span className="px-space-sm py-1 rounded-full bg-surface-container-high/80 backdrop-blur-md text-on-surface font-label-caps text-label-caps font-bold">
                 {selectedSteed.series}
               </span>
