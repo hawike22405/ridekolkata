@@ -6,9 +6,9 @@
 
 An interactive cycling experience that brings Kolkata's heritage, route discovery, and a 3D bicycle showroom together.
 
-**React 19 · Three.js · Node.js · Express · MongoDB Atlas**
+**React 19 · Three.js · Node.js · Express · MongoDB Atlas · Socket.IO**
 
-[Explore the code](src/) · [Run locally](#run-locally) · [Admin backend](backend/README.md) · [3D configuration](backend/docs/visual-config.md)
+[Explore the code](src/) · [Run locally](#run-locally) · [Admin backend](backend/README.md) · [3D configuration](backend/docs/visual-config.md) · [Ride telemetry](backend/docs/telemetry.md)
 
 </div>
 
@@ -29,6 +29,7 @@ The project is evolving from a frontend prototype into a platform with database-
 | **Ride planning** | Route recommender UI and a Gemini-backed endpoint |
 | **Community and rider views** | Night rides, past rides, profiles, and community sections |
 | **Admin operations** | Separate authenticated console for routes, pricing, and 3D settings |
+| **Ride telemetry backend** | Scoped ride tokens, GPS validation, GeoJSON history, and admin analytics |
 | **Validated configuration** | Strict MongoDB models and API validation with explicit empty/error states |
 
 **Current status:** the existing rider frontend still uses prototype data and fallback behavior. The new backend is a separate service; it is not yet connected to the rider frontend. No production availability, real-time tracking, completed booking flow, or database-only rendering is implied by the interface.
@@ -83,7 +84,7 @@ TRUST_PROXY_HOPS=0
 
 These values let the backend's own admin console run separately from the frontend on port 3000. They do not connect the two services.
 
-Follow the [backend setup instructions](backend/README.md) to generate a JWT secret, create indexes, and provision your real admin account. There are **no default credentials or seeded accounts**.
+Follow the [backend setup instructions](backend/README.md) to generate separate admin and telemetry JWT secrets, create indexes, and provision your real admin account. There are **no default credentials or seeded accounts**.
 
 ```bash
 npm run indexes
@@ -99,7 +100,7 @@ Open **http://localhost:3001/admin/**. Sign in and configure your own routes, fa
 npm test --prefix backend
 ```
 
-The suite covers authentication rejection, strict schemas, configuration output validation, and revision handling. It does not require Atlas or populate business collections. Live Atlas integration and deployment tests still require your environment.
+The suite covers authentication, strict schemas, configuration validation, telemetry calculations, replay/conflict handling, and real local Socket.IO connections. It does not require Atlas or populate business collections. Live Atlas integration and deployment tests still require your environment.
 
 ## 3D settings, controlled by the admin
 
@@ -114,13 +115,21 @@ Phase 2 adds a single explicit scene configuration containing:
 
 Admin writes require JWT authentication. Updates and deletion use revision-based `If-Match` checks to reject stale edits. See the [complete API contract](backend/docs/visual-config.md).
 
+## From a ride to useful data
+
+The Phase 3 backend accepts authenticated Socket.IO GPS pings for admin-created rides. It calculates observed distance, elapsed duration and speed, preserves gaps explicitly, and provides live-user and popular-route analytics. The admin console can start or end rides and issue a token scoped to one rider's session.
+
+**Upgrade note:** add a separate `TELEMETRY_JWT_SECRET`, run `npm ci` and `npm run indexes` inside `backend/`, then restart. The container/Node server hosts WebSockets; the generic serverless handler remains HTTP-only. Sampling and ride duration are bounded, and current speed becomes unknown when tracking is stale.
+
+The existing rider UI is not collecting GPS yet. Read the [telemetry protocol and limits](backend/docs/telemetry.md) before integration or deployment.
+
 ## Development roadmap
 
 | Phase | Scope | Status in this branch |
 | --- | --- | --- |
 | **1 — Foundation** | Admin authentication, routes, pricing, and deployment scaffold | Implemented |
 | **2 — Visual configuration** | Strict 3D schema, public read endpoint, and admin editor | Implemented |
-| **3 — Ride telemetry** | Rider sessions, geospatial history, speed, duration, and analytics | Planned |
+| **3 — Ride telemetry** | Rider sessions, geospatial history, speed, duration, and analytics | Backend implemented |
 | **4 — Frontend integration** | Connect UI to APIs, remove prototype data, and complete deployment hardening | Planned |
 
 Saving a 3D setting does not yet update the current rider canvas. Frontend loading, asset failure handling, and configuration application belong to the integration phase.

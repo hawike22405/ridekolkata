@@ -1,4 +1,6 @@
 import express from 'express';
+import {createRideService} from './telemetry/service.js';
+import {mountAdminRideApi,mountRiderApi} from './telemetry/api.js';
 import {visualHandlers} from './visual-api.js';
 import helmet from 'helmet';
 import cors from 'cors';
@@ -21,6 +23,8 @@ export function createApp(config,{ensureDb=async()=>{}}={}){
  app.use('/admin',express.static(fileURLToPath(new URL('../public',import.meta.url))));
  app.use('/api',(_req,res,next)=>{res.set('Cache-Control','no-store');next();});
  app.use('/api',rateLimit({windowMs:60000,limit:120,standardHeaders:'draft-8',legacyHeaders:false}));
+ const rides=createRideService({secret:config.TELEMETRY_JWT_SECRET,ensureDb});
+ mountRiderApi(app,rides);
  const visuals=visualHandlers({ensureDb});
  app.get('/api/ui/3d-config',visuals.read);
  const dummyHash=hashPassword('timing-only-not-an-account');
@@ -34,6 +38,7 @@ export function createApp(config,{ensureDb=async()=>{}}={}){
  if(typeof payload!=='object'||!objectId.safeParse(payload.sub).success)throw fail(401,'Invalid token');await ensureDb();
  const admin=await Admin.findById(payload.sub);if(!admin?.active||admin.tokenVersion!==payload.ver)throw fail(401,'Session revoked');if(admin.role!=='admin'||payload.role!=='admin')throw fail(403,'Admin access required');req.admin=admin;next();}
  app.use('/api/admin',auth);
+ mountAdminRideApi(app,rides,{ensureDb});
  app.get('/api/admin/visual-config',visuals.read);
  app.post('/api/admin/visual-config',visuals.create);
  app.put('/api/admin/visual-config',visuals.replace);
@@ -49,5 +54,5 @@ export function createApp(config,{ensureDb=async()=>{}}={}){
  app.delete(`${base}/:id`,async(req,res)=>{const id=objectId.parse(req.params.id),version=expected(req);const result=await Model.deleteOne({_id:id,__v:version});if(!result.deletedCount)throw fail(409,'Record changed or no longer exists');res.status(204).end();});
  }
  app.use((_req,_res,next)=>next(fail(404,'Endpoint not found')));
- app.use((err,_req,res,_next)=>{if(err instanceof ZodError)return res.status(400).json({error:'Validation failed',issues:err.issues.map(i=>({path:i.path,message:i.message}))});if(err.code===11000)return res.status(409).json({error:'Duplicate record'});if(err.name==='VersionError')return res.status(409).json({error:'Version conflict; reload record'});if(['ValidationError','StrictModeError','CastError'].includes(err.name))return res.status(400).json({error:'Invalid record'});const status=Number.isInteger(err.status)&&err.status>=400&&err.status<500?err.status:503;res.status(status).json({error:status===503?'Service unavailable':err.message});});return app;
+ app.use((err,_req,res,_next)=>{if(err instanceof ZodError)return res.status(400).json({error:'Validation failed',issues:err.issues.map(i=>({path:i.path,message:i.message}))});if(err.code===11000)return res.status(409).json({error:'Duplicate record'});if(err.name==='VersionError')return res.status(409).json({error:'Version conflict; reload record'});if(['ValidationError','StrictModeError','CastError'].includes(err.name))return res.status(400).json({error:'Invalid record'});const status=Number.isInteger(err.status)&&err.status>=400&&err.status<500?err.status:503;res.status(status).json({error:status===503?'Service unavailable':err.message,...(status<500&&typeof err.code==='string'?{code:err.code}:{})});});return app;
 }
