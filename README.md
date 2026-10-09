@@ -1,6 +1,6 @@
 <div align="center">
 
-# Ride Kolkata
+# Ride Kolkata 
 
 ### Explore the city. Find your rhythm. Ride its stories.
 
