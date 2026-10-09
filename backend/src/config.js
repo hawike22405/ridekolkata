@@ -1,0 +1,3 @@
+import {z} from 'zod';
+const envSchema=z.object({MONGODB_URI:z.string().regex(/^mongodb(?:\+srv)?:\/\//),JWT_SECRET:z.string().min(64),ALLOWED_ORIGIN:z.url().refine(v=>new URL(v).origin===v,'Use an exact origin without a trailing slash'),NODE_ENV:z.enum(['development','test','production']).default('production'),PORT:z.coerce.number().int().min(1).max(65535).default(3000),TRUST_PROXY_HOPS:z.coerce.number().int().min(0).max(10).default(0)});
+export function readConfig(env=process.env){const c=envSchema.parse(env);if(c.NODE_ENV==='production'&&!c.ALLOWED_ORIGIN.startsWith('https://'))throw new Error('Production origin must use HTTPS');return c;}

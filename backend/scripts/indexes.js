@@ -1,0 +1,2 @@
+import mongoose from 'mongoose';import {readConfig} from '../src/config.js';import {connect} from '../src/db.js';import {Admin,Route,Pricing} from '../src/models.js';
+try{await connect(readConfig().MONGODB_URI);for(const model of [Admin,Route,Pricing])await model.createIndexes();console.log('Indexes created');}finally{await mongoose.disconnect();}
