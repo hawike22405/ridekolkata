@@ -1,6 +1,6 @@
-# Ride Kolkata — Phase 1
+# Ride Kolkata — Backend (Phases 1–2)
 
-Node.js 24, Express 5, MongoDB Atlas/Mongoose, strict Zod input contracts and a same-origin admin console. This project contains Phase 1 only. No rider frontend, Three.js changes, telemetry ingestion, VisualConfig or demo records are included.
+Node.js 24, Express 5, MongoDB Atlas/Mongoose, strict Zod input contracts and a same-origin admin console. This service implements Phases 1–2: routes, pricing, admin authentication, and validated visual configuration. The rider frontend is not connected yet; telemetry and frontend integration remain future phases. No demo records are included.
 
 ## Zero-data policy
 
@@ -8,7 +8,7 @@ Startup never creates any business records or accounts. List endpoints return `{
 
 ## Repository integration
 
-This directory is an independently deployed Phase 1 backend. The repository root retains the existing React/Vite application and `server.ts`. Root npm commands still start that existing app; they do not start this service. Run the commands below from `backend/`.
+This directory is an independently deployed backend. The repository root retains the existing React/Vite application and `server.ts`. Root npm commands still start that existing app; they do not start this service. Run the commands below from `backend/`.
 
 For simultaneous local development, explicitly set the backend PORT to 3001, NODE_ENV to development, and ALLOWED_ORIGIN to `http://localhost:3001`; open the backend admin console at `http://localhost:3001/admin/`. The existing frontend server uses port 3000. When frontend integration is implemented, configure the actual frontend origin and API routing as part of Phase 4.
 
@@ -25,6 +25,10 @@ The existing application includes `src/data/mockData.ts` and fallback behavior i
 7. Run `npm start` and open `/admin/` on the backend origin. Sign in with the account you created.
 
 The console starts empty. Choose Routes or Pricing, click New record, enter all required fields as JSON, then Create. Edit fetches the saved fields into the editor. Unknown fields and invalid types are rejected. A 409 requires refreshing and reopening the record before editing again. Deletion requires confirmation. Tokens remain in page memory and expire after 15 minutes; reloading requires login. Sign out invalidates all tokens for that account.
+
+## Visual configuration
+
+Select **3D settings** in the admin console to create, edit or delete the single explicit visual configuration. The public endpoint is `GET /api/ui/3d-config`; no settings returns 404, and invalid stored settings or database failure returns 503. No default model or scene is substituted. See the [full Phase 2 contract](docs/visual-config.md) for fields, inferred TypeScript types, revision-based writes and integration requirements.
 
 ## Data contracts
 
@@ -73,7 +77,7 @@ Admin has normalized unique email, a scrypt password hash excluded from default 
 | GET | /health/live | Process liveness |
 | GET | /health/ready | Database readiness; 503 if unavailable |
 
-Except login and health endpoints, all API operations require `Authorization: Bearer <your token>`. List queries accept only page (default 1) and limit (default 25, maximum 100). Objects include `_id`, `__v`, `createdAt` and `updatedAt`; do not send these in editable JSON.
+The public 3D configuration read endpoint, login, and health endpoints do not require authentication. All other API operations require `Authorization: Bearer <your token>`. List queries accept only page (default 1) and limit (default 25, maximum 100). Objects include `_id`, `__v`, `createdAt` and `updatedAt`; do not send these in editable JSON.
 
 PUT and DELETE require `If-Match` containing the quoted integer version from the record's `__v` or ETag. Missing version: 428. Invalid fields: 400. Missing/expired token: 401. Forbidden origin/role: 403. Concurrent changes: 409. Rate limit: 429. Database/service failure: 503, with no data substitution. Updates use Mongoose optimistic concurrency; deletes atomically match ID and version.
 
@@ -93,8 +97,8 @@ The bundled rate limiter is per-process. For multiple containers/serverless prod
 
 Before production, use your configured records to verify login, create/list/read/update/delete and stale-version conflicts against Atlas. Check an empty collection returns an empty array. No business records should be generated for this purpose without explicit operator input.
 
-The existing React/Three.js frontend is kept unchanged in this Phase 1 addition. It cannot be verified to render only database configuration until Phase 4 wiring is completed. Phase 2 will add validated visual configuration; backend numeric validation alone cannot guarantee every remote model asset is loadable or that WebGL never loses context.
+The existing React/Three.js frontend is kept unchanged in this Phase 1 addition. It cannot be verified to render only database configuration until Phase 4 wiring is completed. Phase 2 provides validated visual configuration; backend numeric validation alone cannot guarantee every remote model asset is loadable or that WebGL never loses context.
 
 Implementation references: https://expressjs.com/en/5x/guide/error-handling/ and https://mongoosejs.com/docs/guide.html.
 
-Stop here. Continue to Phase 2 only after `Proceed`.
+Stop here. Continue to Phase 3 only after `Proceed`.
