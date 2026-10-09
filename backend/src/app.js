@@ -1,4 +1,5 @@
 import express from 'express';
+import {visualHandlers} from './visual-api.js';
 import helmet from 'helmet';
 import cors from 'cors';
 import rateLimit from 'express-rate-limit';
@@ -20,6 +21,8 @@ export function createApp(config,{ensureDb=async()=>{}}={}){
  app.use('/admin',express.static(fileURLToPath(new URL('../public',import.meta.url))));
  app.use('/api',(_req,res,next)=>{res.set('Cache-Control','no-store');next();});
  app.use('/api',rateLimit({windowMs:60000,limit:120,standardHeaders:'draft-8',legacyHeaders:false}));
+ const visuals=visualHandlers({ensureDb});
+ app.get('/api/ui/3d-config',visuals.read);
  const dummyHash=hashPassword('timing-only-not-an-account');
  app.post('/api/admin/auth/login',rateLimit({windowMs:900000,limit:10,standardHeaders:'draft-8',legacyHeaders:false}),async(req,res)=>{
  const input=credentials.parse(req.body);await ensureDb();const admin=await Admin.findOne({email:input.email}).select('+passwordHash');
@@ -31,6 +34,10 @@ export function createApp(config,{ensureDb=async()=>{}}={}){
  if(typeof payload!=='object'||!objectId.safeParse(payload.sub).success)throw fail(401,'Invalid token');await ensureDb();
  const admin=await Admin.findById(payload.sub);if(!admin?.active||admin.tokenVersion!==payload.ver)throw fail(401,'Session revoked');if(admin.role!=='admin'||payload.role!=='admin')throw fail(403,'Admin access required');req.admin=admin;next();}
  app.use('/api/admin',auth);
+ app.get('/api/admin/visual-config',visuals.read);
+ app.post('/api/admin/visual-config',visuals.create);
+ app.put('/api/admin/visual-config',visuals.replace);
+ app.delete('/api/admin/visual-config',visuals.remove);
  app.post('/api/admin/auth/logout',async(req,res)=>{await Admin.updateOne({_id:req.admin._id},{$inc:{tokenVersion:1}});res.status(204).end();});
  for(const [name,Model,schema] of [['routes',Route,routeInput],['pricing',Pricing,pricingInput]]){
  const base=`/api/admin/${name}`;
