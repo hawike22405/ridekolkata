@@ -2,7 +2,7 @@
 
 The container/Node server now accepts Socket.IO location pings for explicitly created rides. It stores accepted GPS samples, a GeoJSON LineString, timing and distance summaries in one RideSession document. No rides, locations, riders, routes or analytics records are seeded.
 
-The current React app is **not connected** to this service. Phase 4 will add browser location permission, token delivery, frontend API wiring, error handling and removal of prototype data.
+The React rider interface now connects through the same-origin web proxy. It requests location only after the rider supplies an admin-issued token, connects and explicitly presses Share location. Token delivery remains a private operator action; no rider identity provider is invented.
 
 ## Upgrade existing installations
 
@@ -113,7 +113,7 @@ Use the Node/container entry point for Socket.IO. The generic serverless Express
 
 Only WebSocket transport is enabled, so polling-session stickiness is not needed. This implementation sends acknowledgements to the originating client; it does not broadcast rooms or presence between instances. Database revision checks and receipt-time limits apply across instances. Per-process connection/attempt limits do not replace global API gateway protections. Apply distributed abuse controls, measure Atlas throughput, and size pools for instance count before production scale. No load benchmark is claimed.
 
-Phase 4 must connect the real rider identity/token flow, browser geolocation permission, API reads, guarded 3D loading and production origin. No GPS collection starts merely by opening the current rider frontend.
+The connected frontend reads the last accepted sequence on every manual reconnect, sends at most one sample per second with one acknowledgement outstanding, and stops GPS on disconnect, token change, unmount, finish or acknowledgement error. It discards unaccepted captures instead of replaying offline positions. No GPS collection starts merely by opening the frontend.
 
 ## Verification
 

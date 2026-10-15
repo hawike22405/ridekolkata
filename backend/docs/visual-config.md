@@ -55,7 +55,7 @@ The MongoDB singleton uses the unique built-in `_id` index (`current` is an inte
 
 ## Admin console
 
-Sign in at `/admin/` on the backend service, select **3D settings**, and enter a complete JSON object. An unconfigured database shows an empty editor. Field guidance is available without prefilled sample content. Refresh reloads the current server version; save and delete use the loaded revision. On a conflict, copy any unsaved work before refreshing and reapplying your changes.
+Sign in at `/admin/` through the web proxy, select **3D settings**, and enter a complete JSON object. An unconfigured database shows an empty editor. Field guidance is available without prefilled sample content. Refresh reloads the current server version; save and delete use the loaded revision. On a conflict, copy any unsaved work before refreshing and reapplying your changes.
 
 ## Phase 4 integration requirements
 
@@ -66,10 +66,14 @@ Sign in at `/admin/` on the backend service, select **3D settings**, and enter a
 5. Define camera transitions, light/material bindings and mesh animation targets explicitly for the actual models.
 6. Handle WebGL context loss, unsupported devices, and resource limits. Backend validation alone cannot guarantee a stable WebGL context.
 
-Phase 2 exposes settings on fetch; it does not push changes in real time. Existing frontend mock data/fallbacks are still present until the integration phase.
+Phase 2 exposes settings on fetch; it does not push changes in real time. The connected frontend polls visible configuration every 30 seconds and supports manual refresh; unused prototype source remains outside its import graph.
 
 ## Verification scope
 
 Local tests cover contracts, response serialization, auth rejection, error states and optimistic-revision HTTP behavior using non-persisted test inputs and storage doubles. They do not seed application collections. Successful Atlas CRUD and real concurrent MongoDB writes have not been exercised without an Atlas environment.
 
 References: [Zod contracts](https://zod.dev/api), [Three.js normalized quaternions](https://threejs.org/docs/pages/Quaternion.html), [Mongoose schemas](https://mongoosejs.com/docs/guide.html).
+
+## Connected frontend (Phase 4)
+
+The active React application consumes this executable contract, polls while visible and exposes manual refresh. See [deployment guide](../../docs/deployment.md) for stable canvas updates, model budgets and asset CSP. Optional `drivetrainBinding` accepts an exact unique `nodeName`, an `axis` of x/y/z and a model-local `pivot` vector. It can be null or omitted for static legacy configurations. Positive animation speed alone does not guess a model node.

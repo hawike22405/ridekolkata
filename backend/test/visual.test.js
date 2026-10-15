@@ -119,3 +119,10 @@ test('real public endpoint is mounted and fails closed when DB is unavailable', 
 test('unknown response schema versions fail closed', () => {
   assert.throws(()=>serializeVisualConfig({config:{...validInput(),schemaVersion:2},revision:randomUUID(),updatedAt:new Date()}),error=>error.status===503);
 });
+
+test('optional drivetrain binding preserves legacy static configs and requires explicit numeric pivots', async()=>{
+ const input=validInput();assert.equal(visualConfigInput.safeParse(input).success,true);assert.equal(visualConfigInput.safeParse({...input,drivetrainBinding:null}).success,true);
+ const binding={nodeName:'Contract test node',axis:'x',pivot:[0,0,0]};assert.deepEqual(visualConfigInput.parse({...input,drivetrainBinding:binding}).drivetrainBinding,binding);
+ for(const invalid of [{...binding,axis:'w'},{...binding,pivot:['0',0,0]},{...binding,nodeName:''},{...binding,pivot:[0,0]},{...binding,extra:true}])assert.equal(visualConfigInput.safeParse({...input,drivetrainBinding:invalid}).success,false);
+ await new VisualConfig({_id:'current',revision:randomUUID(),config:{...input,drivetrainBinding:binding}}).validate();
+});
