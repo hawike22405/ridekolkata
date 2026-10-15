@@ -1,4 +1,5 @@
 import express from 'express';
+import {mountCatalog} from './catalog.js';
 import {createRideService} from './telemetry/service.js';
 import {mountAdminRideApi,mountRiderApi} from './telemetry/api.js';
 import {visualHandlers} from './visual-api.js';
@@ -23,6 +24,7 @@ export function createApp(config,{ensureDb=async()=>{}}={}){
  app.use('/admin',express.static(fileURLToPath(new URL('../public',import.meta.url))));
  app.use('/api',(_req,res,next)=>{res.set('Cache-Control','no-store');next();});
  app.use('/api',rateLimit({windowMs:60000,limit:120,standardHeaders:'draft-8',legacyHeaders:false}));
+ mountCatalog(app,ensureDb);
  const rides=createRideService({secret:config.TELEMETRY_JWT_SECRET,ensureDb});
  mountRiderApi(app,rides);
  const visuals=visualHandlers({ensureDb});

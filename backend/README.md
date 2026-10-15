@@ -1,6 +1,6 @@
-# Ride Kolkata — Backend (Phases 1–3)
+# Ride Kolkata — Backend (Phases 1–4)
 
-Node.js 24, Express 5, MongoDB Atlas/Mongoose, strict Zod input contracts and a same-origin admin console. This service implements Phases 1–3: routes, pricing, admin authentication, validated visual configuration, ride telemetry and analytics. The rider frontend is not connected yet; frontend integration remains Phase 4. No demo records are included.
+Node.js 24, Express 5, MongoDB Atlas/Mongoose, strict Zod input contracts and a same-origin admin console. This service implements routes, pricing, admin authentication, validated visual configuration, ride telemetry and analytics. The Phase 4 React interface connects through the same-origin web proxy. No demo records are included.
 
 ## Zero-data policy
 
@@ -10,9 +10,7 @@ Startup never creates any business records or accounts. List endpoints return `{
 
 This directory is an independently deployed backend. The repository root retains the existing React/Vite application and `server.ts`. Root npm commands still start that existing app; they do not start this service. Run the commands below from `backend/`.
 
-For simultaneous local development, explicitly set the backend PORT to 3001, NODE_ENV to development, and ALLOWED_ORIGIN to `http://localhost:3001`; open the backend admin console at `http://localhost:3001/admin/`. The existing frontend server uses port 3000. When frontend integration is implemented, configure the actual frontend origin and API routing as part of Phase 4.
-
-The existing application includes `src/data/mockData.ts` and fallback behavior in its current server. This addition does not migrate those consumers or claim that the existing app already meets the database-only rendering requirement. Do not expose the legacy `/api/upload-model` endpoint as an authenticated admin API: its current handler does not authenticate uploads. Migration and security review of the legacy app remain necessary before production.
+For local development, use backend PORT=3001, NODE_ENV=development and ALLOWED_ORIGIN=http://localhost:3000. Start the root web process separately on port 3000 and access `/admin/` through that web origin. The active React application loads published data from this backend. Legacy prototype components remain as unused source references; the old web server recommendation and upload handlers are removed.
 
 ## Run
 
@@ -22,7 +20,7 @@ The existing application includes `src/data/mockData.ts` and fallback behavior i
 4. Set ALLOWED_ORIGIN to the exact permitted browser origin, without a trailing slash. Production requires HTTPS. For local use explicitly set NODE_ENV=development and ALLOWED_ORIGIN to your local server origin.
 5. Run `npm run indexes` before serving traffic. This creates the unique admin email index and route start/end 2dsphere indexes. It also creates RideSession unique and 2dsphere indexes. Run it before serving rides; it never drops indexes. Automatic index building is disabled.
 6. Create your real admin using `npm run admin:create`. The command reads one JSON object with `email` and `password` from standard input until EOF. Password must be 12–128 characters. Supply input from a protected secret manager/process or a temporary file with restrictive permissions, then delete it. Avoid putting passwords in command arguments or shell history. This is an operator-only provisioning command; no public signup or default credentials exist. It creates only the explicitly requested real account.
-7. Run `npm start` and open `/admin/` on the backend origin. Sign in with the account you created.
+7. Run `npm start` and open `http://localhost:3000/admin/` through the root web proxy. Sign in with the account you created.
 
 The console starts empty. Choose Routes or Pricing, click New record, enter all required fields as JSON, then Create. Edit fetches the saved fields into the editor. Unknown fields and invalid types are rejected. A 409 requires refreshing and reopening the record before editing again. Deletion requires confirmation. Tokens remain in page memory and expire after 15 minutes; reloading requires login. Sign out invalidates all tokens for that account.
 
@@ -103,8 +101,14 @@ The bundled rate limiter is per-process. For multiple containers/serverless prod
 
 Before production, use your configured records to verify login, create/list/read/update/delete and stale-version conflicts against Atlas. Check an empty collection returns an empty array. No business records should be generated for this purpose without explicit operator input.
 
-The existing React/Three.js frontend is kept unchanged through Phases 1–3. It cannot be verified to render only database configuration until Phase 4 wiring is completed. Phase 2 provides validated visual configuration; backend numeric validation alone cannot guarantee every remote model asset is loadable or that WebGL never loses context.
+The connected React interface validates responses before display and handles asset errors explicitly. Backend numeric validation alone cannot guarantee every model loads on every WebGL device. See the deployment guide for file budgets and target-device verification.
 
 Implementation references: https://expressjs.com/en/5x/guide/error-handling/ and https://mongoosejs.com/docs/guide.html.
 
-Stop here. Continue to Phase 4 only after `Proceed`.
+Phase 4 is implemented in this branch.
+
+## Phase 4: connected rider interface
+
+Run the root web process on port 3000 and this API on port 3001. Use ALLOWED_ORIGIN=http://localhost:3000 for development and access the admin console through http://localhost:3000/admin/. Public GET `/api/catalog/routes` and `/api/catalog/pricing` return only enabled, validated records, with page/limit/total metadata. Both endpoints support page (1–100000) and limit (1–100) and return empty data when nothing is published. Disabled documents and database internals are not returned. Read/write errors never substitute records.
+
+The rider interface also consumes `/api/ui/3d-config`, `/api/rides/current`, `/api/rides/finish` and authenticated Socket.IO pings. See the root README and [deployment guide](../docs/deployment.md) for current settings, origin/proxy requirements, model restrictions and environment templates.

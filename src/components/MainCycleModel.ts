@@ -24,9 +24,9 @@ export interface MainCycleMaterials {
 
 export interface MainCycleInstance {
   bikeGroup: THREE.Group;
-  wheelFGroup: THREE.Group;
-  wheelRGroup: THREE.Group;
-  cranksGroup: THREE.Group;
+  wheelFGroup: THREE.Group | undefined;
+  wheelRGroup: THREE.Group | undefined;
+  cranksGroup: THREE.Group | undefined;
   materials: MainCycleMaterials;
   nodes: Record<string, THREE.Object3D>;
   isGlbLoaded: boolean;

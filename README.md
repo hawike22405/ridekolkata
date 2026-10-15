@@ -1,155 +1,90 @@
 <div align="center">
 
-# Ride Kolkata 
+# Ride Kolkata ↗
+### Take the scenic route.
 
-### Explore the city. Find your rhythm. Ride its stories.
+**A closer look at the city, from the saddle.**
 
-An interactive cycling experience that brings Kolkata's heritage, route discovery, and a 3D bicycle showroom together.
+Explore published cycling routes, inspect an administrator-selected bicycle in 3D, and share location during an active ride.
 
-**React 19 · Three.js · Node.js · Express · MongoDB Atlas · Socket.IO**
+**React 19 · Three.js · Express · MongoDB Atlas · Socket.IO**
 
-[Explore the code](src/) · [Run locally](#run-locally) · [Admin backend](backend/README.md) · [3D configuration](backend/docs/visual-config.md) · [Ride telemetry](backend/docs/telemetry.md)
+[Get started](#run-locally) · [Deployment](docs/deployment.md) · [Admin guide](backend/README.md) · [3D contract](backend/docs/visual-config.md) · [Telemetry](backend/docs/telemetry.md)
 
 </div>
 
 ---
 
-## A different way to see Kolkata
+## Built around the real ride
 
-Ride Kolkata combines a city-focused interface with an interactive bicycle experience. Explore heritage routes, inspect the bike in 3D, and discover features for night rides, ride history, weather, and route recommendations.
+A dark, green-accented interface puts the route, bicycle and ride details first. Administrators publish the content; riders see exactly those enabled records. An empty database produces an empty catalog. Missing configuration or a network failure produces an explicit state, with a way to retry.
 
-The project is evolving from a frontend prototype into a platform with database-managed routes, pricing, and visual settings. The goal is simple: give administrators control over what riders see, with explicit validation and no invented backend content.
-
-## Explore the experience
-
-| Experience | What is in the repository |
+| For riders | For administrators |
 | --- | --- |
-| **Interactive bicycle showroom** | Three.js canvas, bicycle models, and fleet views |
-| **Kolkata heritage discovery** | Heritage explorer, map, and route views |
-| **Ride planning** | Route recommender UI and a Gemini-backed endpoint |
-| **Community and rider views** | Night rides, past rides, profiles, and community sections |
-| **Admin operations** | Separate authenticated console for routes, pricing, and 3D settings |
-| **Ride telemetry backend** | Scoped ride tokens, GPS validation, GeoJSON history, and admin analytics |
-| **Validated configuration** | Strict MongoDB models and API validation with explicit empty/error states |
+| Browse published routes and their configured waypoints | Create, edit, disable and remove routes and INR tariffs |
+| View base fare, per-minute rate and surge multiplier | Set model URL, camera poses, lighting, colors and animation |
+| Inspect the configured 3D asset and select camera views | Start verified riders’ sessions and privately issue scoped tokens |
+| Explicitly start/pause GPS sharing and finish a session | Query live telemetry and historical ride analytics |
 
-**Current status:** the existing rider frontend still uses prototype data and fallback behavior. The new backend is a separate service; it is not yet connected to the rider frontend. No production availability, real-time tracking, completed booking flow, or database-only rendering is implied by the interface.
+The active application contains **no seeded records, invented availability, ratings, weather, generated routes or simulated bookings**. Previous prototype components remain in `src/components`, `src/services` and `src/data` for reference, but the connected `App.tsx` does not import them. Legacy Gemini recommendation and model-upload endpoints have been removed from the web server. Model files are published through your controlled asset/deployment process.
 
-## Architecture
+## How it fits together
 
-| Part | Location | Purpose |
-| --- | --- | --- |
-| Rider experience | `src/`, `public/` | React/Vite UI, styles, assets, and Three.js scenes |
-| Existing app server | `server.ts` | Serves the frontend and existing recommendation/model endpoints |
-| Admin/configuration service | `backend/` | Express 5 APIs, MongoDB models, JWT authentication, and admin console |
-| Visual contract | `backend/src/visual-contract.js` | Shared runtime rules for saved settings and public API responses |
-| API documentation | `backend/docs/visual-config.md` | Field meanings, versioning, and frontend integration requirements |
-
-The two services have independent dependencies and environment files. The root `npm run dev` command starts the existing app. It does not start the new MongoDB backend.
+The web process serves React and proxies `/api`, `/admin`, `/health` and `/socket.io` to the separate API process. Browser requests use the same public origin; database credentials and signing keys exist only in the API environment. The Node/container API persists to MongoDB Atlas and hosts Socket.IO. A generic serverless API export supports HTTP only; telemetry still requires a long-running Node service.
 
 ## Run locally
 
-### 1. Start the existing frontend app
+Use **Node.js 24 or later** and npm. Install both locked dependency sets:
 
-Use Node.js 24 or newer for a consistent environment across both services.
-
-```bash
-npm install
+```sh
+npm ci
+npm ci --prefix backend
+cp .env.example .env
+cp backend/.env.example backend/.env
 ```
 
-Copy the root `.env.example` to `.env` and provide your own credentials for the integrations you intend to use. The current `server.ts` loads `.env` through `dotenv.config()`; it does not explicitly load `.env.local`.
+Fill `backend/.env` with your Atlas URI and **two different** random signing keys of at least 64 characters. Generate each key separately:
 
-```bash
+```sh
+node -e "console.log(require('node:crypto').randomBytes(48).toString('hex'))"
+```
+
+Default development settings are web `http://localhost:3000`, API `http://localhost:3001`, and API `ALLOWED_ORIGIN=http://localhost:3000`. The example proxy hop count is one for the web proxy; review it for your topology. Never put credentials in `VITE_*` variables or commit a real `.env`.
+
+Create the required indexes and your first real administrator from the backend directory:
+
+```sh
+cd backend
+npm run indexes
+npm run admin:create
 npm run dev
 ```
 
-Open **http://localhost:3000**. The root app's Gemini route endpoint requires your `GEMINI_API_KEY`. Its existing fallback behavior is part of the prototype and has not yet been migrated to the new backend.
+In another terminal, from the repository root:
 
-### 2. Set up the admin backend
-
-In a separate terminal:
-
-```bash
-cd backend
-npm ci
+```sh
+npm run dev
 ```
 
-Copy `backend/.env.example` to `backend/.env`. Supply your Atlas URI and JWT secret, then explicitly use these local settings:
+Open `http://localhost:3000` and `http://localhost:3000/admin/`. Sign in with the administrator you created. Publish routes and prices, then create a complete 3D configuration. Every required configuration value must be chosen explicitly. Use a self-contained GLB or glTF with embedded resources. The checked-in asset can be selected explicitly as `/Main%20Cycle.glb`; it is never auto-selected.
 
-```dotenv
-NODE_ENV=development
-PORT=3001
-ALLOWED_ORIGIN=http://localhost:3001
-TRUST_PROXY_HOPS=0
-```
+## Start a real ride
 
-These values let the backend's own admin console run separately from the frontend on port 3000. They do not connect the two services.
+In the admin **Ride telemetry** tab, select an enabled route by its ID, enter a verified rider reference, and start the session with a new request UUID. Privately give its ride token to the rider. The rider enters it in **Your ride**, connects, and presses **Share location**. Browser location permission and HTTPS (or localhost) are required. Tokens are kept only in page memory; reloading requires entering the token again.
 
-Follow the [backend setup instructions](backend/README.md) to generate separate admin and telemetry JWT secrets, create indexes, and provision your real admin account. There are **no default credentials or seeded accounts**.
+The browser sends at most one GPS sample per second, with one acknowledgement outstanding. It does not buffer offline locations. Connection/acknowledgement errors stop sharing; reconnect reads the server’s accepted sequence before using new locations. Pausing location sharing does not finish the session. Finish explicitly, or ask the administrator to finish it. Token expiry also stops sharing; administrators can issue a replacement token.
 
-```bash
-npm run indexes
-# Provision your admin using the documented stdin-based command first.
-npm start
-```
+## Verify and deploy
 
-Open **http://localhost:3001/admin/**. Sign in and configure your own routes, fares, and scene settings. New databases begin empty.
-
-### 3. Run backend checks
-
-```bash
+```sh
+npm run lint
+npm test
 npm test --prefix backend
+npm run build
 ```
 
-The suite covers authentication, strict schemas, configuration validation, telemetry calculations, replay/conflict handling, and real local Socket.IO connections. It does not require Atlas or populate business collections. Live Atlas integration and deployment tests still require your environment.
+Browser checks: `npx playwright install chromium`, then `npm run test:browser`. Test inputs live only in isolated test transports and are never inserted into Atlas or served by the application.
 
-## 3D settings, controlled by the admin
+For production, configure exact HTTPS origins using the intentionally blank `.env.production.example` templates, deploy the API privately behind the web proxy, enable WebSocket upgrades, run the index migration and start the web build with `npm start`. Full instructions, index requirements, asset restrictions and serverless limits are in [deployment.md](docs/deployment.md).
 
-Phase 2 adds a single explicit scene configuration containing:
-
-- Model URL, scale, and normalized rotation quaternion.
-- Lighting intensity and scene colors.
-- Camera field of view and ordered camera pivot poses.
-- Drivetrain animation speed in radians per second.
-
-`GET /api/ui/3d-config` exposes validated settings. Missing configuration returns **404**; malformed stored configuration or a database outage returns **503**. The backend never substitutes a demo scene.
-
-Admin writes require JWT authentication. Updates and deletion use revision-based `If-Match` checks to reject stale edits. See the [complete API contract](backend/docs/visual-config.md).
-
-## From a ride to useful data
-
-The Phase 3 backend accepts authenticated Socket.IO GPS pings for admin-created rides. It calculates observed distance, elapsed duration and speed, preserves gaps explicitly, and provides live-user and popular-route analytics. The admin console can start or end rides and issue a token scoped to one rider's session.
-
-**Upgrade note:** add a separate `TELEMETRY_JWT_SECRET`, run `npm ci` and `npm run indexes` inside `backend/`, then restart. The container/Node server hosts WebSockets; the generic serverless handler remains HTTP-only. Sampling and ride duration are bounded, and current speed becomes unknown when tracking is stale.
-
-The existing rider UI is not collecting GPS yet. Read the [telemetry protocol and limits](backend/docs/telemetry.md) before integration or deployment.
-
-## Development roadmap
-
-| Phase | Scope | Status in this branch |
-| --- | --- | --- |
-| **1 — Foundation** | Admin authentication, routes, pricing, and deployment scaffold | Implemented |
-| **2 — Visual configuration** | Strict 3D schema, public read endpoint, and admin editor | Implemented |
-| **3 — Ride telemetry** | Rider sessions, geospatial history, speed, duration, and analytics | Backend implemented |
-| **4 — Frontend integration** | Connect UI to APIs, remove prototype data, and complete deployment hardening | Planned |
-
-Saving a 3D setting does not yet update the current rider canvas. Frontend loading, asset failure handling, and configuration application belong to the integration phase.
-
-## Deployment notes
-
-The backend includes a non-root Docker image definition and a serverless Express entry point. Deployment still requires Atlas network access, a secret manager, HTTPS, and distributed request throttling. Read [backend deployment guidance](backend/README.md#deployment) before exposing it publicly.
-
-The existing root server's `/api/upload-model` handler does not authenticate uploads. Treat that legacy endpoint as a migration item before production exposure. Backend validation checks model URL syntax, not the contents or reachability of remote assets.
-
-## Contribute
-
-Ideas, bug reports, and focused pull requests are welcome. Explain the behavior you want to change, keep changes scoped, and include the checks you ran. For backend changes, preserve explicit admin configuration and avoid adding seeded content or fallback business values.
-
-[Open an issue](https://github.com/hawike22405/ridekolkata/issues) · [Review pull requests](https://github.com/hawike22405/ridekolkata/pulls)
-
----
-
-<div align="center">
-
-**Built around Kolkata. Shaped by every ride.**
-
-</div>
+This release connects catalog, 3D and telemetry flows. Rider account registration, reservations, payment collection and automatic billing are outside the implemented API. Prices are displayed as configured; the fare formula shown is an estimate, not a payment transaction. No live Atlas, public-domain deployment, physical GPS accuracy or production load test is claimed. See [verification](backend/VERIFICATION.md).
