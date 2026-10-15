@@ -9,7 +9,7 @@ Explore published cycling routes, inspect an administrator-selected bicycle in 3
 
 **React 19 · Three.js · Express · MongoDB Atlas · Socket.IO**
 
-[Get started](#run-locally) · [Deployment](docs/deployment.md) · [Admin guide](backend/README.md) · [3D contract](backend/docs/visual-config.md) · [Telemetry](backend/docs/telemetry.md)
+[Get started](#run-locally) · [Project roadmap](ROADMAP.md) · [Deployment](docs/deployment.md) · [Admin guide](backend/README.md) · [3D contract](backend/docs/visual-config.md) · [Telemetry](backend/docs/telemetry.md)
 
 </div>
 
