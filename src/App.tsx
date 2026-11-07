@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react";
 import ConfiguredScene from "./integration/ConfiguredScene";
+import GlassRefractionCursor from "./components/GlassRefractionCursor";
 import RidePanel from "./integration/RidePanel";
 import { getPrices, getRoutes, getVisual } from "./integration/api";
 import { useResource } from "./integration/useResource";
@@ -100,6 +101,20 @@ export default function App() {
               </p>
             )}
           </div>
+        </section>
+        <section className="glass-feature" aria-labelledby="glass-feature-title">
+          <div className="glass-feature-heading">
+            <span className="eyebrow">THE CITY THROUGH A NEW LENS</span>
+            <h2 id="glass-feature-title">See Kolkata differently.</h2>
+            <p>Move your cursor across Howrah Bridge and watch the city bend through glass.</p>
+          </div>
+          <GlassRefractionCursor
+            src="/howrah-bridge.jpg"
+            alt="Howrah Bridge over the Hooghly River in Kolkata"
+            refraction={0.68}
+            radius={0.11}
+            trailLength={16}
+          />
         </section>
         <section id="routes" className="catalog">
           <div className="section-head">
