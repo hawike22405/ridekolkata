@@ -7,6 +7,7 @@ export default defineConfig(() => {
   return {
     plugins: [react(), tailwindcss()],
     resolve: {
+      dedupe: ['zod'],
       alias: {
         '@': path.resolve(__dirname, '.'),
       },

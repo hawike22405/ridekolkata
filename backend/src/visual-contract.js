@@ -36,6 +36,7 @@ export const visualConfigInput = z.strictObject({
   cameraPivotPoints: z.array(cameraPivot).min(1).max(32),
   cameraFov: z.number().finite().min(10).max(120),
   drivetrainAnimationSpeed: z.number().finite().min(0).max(20),
+  drivetrainBinding: z.strictObject({ nodeName: z.string().min(1).max(120), axis: z.enum(['x','y','z']), pivot: vector3 }).nullable().optional(),
   hexColors: z.strictObject({ background: hexColor, primary: hexColor, accent: hexColor }),
 });
 

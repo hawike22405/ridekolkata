@@ -16,6 +16,7 @@ const config = new Schema({
   cameraPivotPoints: { type: [pivot], required: true, default: undefined },
   cameraFov: { type: Number, required: true },
   drivetrainAnimationSpeed: { type: Number, required: true },
+  drivetrainBinding: {type: new Schema({nodeName:{type:String,required:true},axis:{type:String,enum:['x','y','z'],required:true},pivot:numbers()},embedded)},
   hexColors: { type: colors, required: true },
 }, embedded);
 config.pre('validate', function () { visualConfigInput.parse(this.toObject()); });
